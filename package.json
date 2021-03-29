@@ -1,7 +1,7 @@
 {
   "name": "jupyterlab_wifire_commons",
   "version": "0.1.0",
-  "description": "An interface for wifire commons and jupyterhub."",
+  "description": "An interface for wifire commons and jupyterhub.",
   "keywords": [
     "jupyter",
     "jupyterlab",
