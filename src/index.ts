@@ -8,7 +8,7 @@ import {
 } from '@jupyterlab/application';
 
 import {
-  ToolbarButton
+  CommandToolbarButton
 } from '@jupyterlab/apputils';
 
 import {
@@ -16,32 +16,78 @@ import {
 } from '@jupyterlab/docregistry';
 
 import {
-  NotebookPanel, INotebookModel
+  NotebookPanel, 
+  INotebookModel
 } from '@jupyterlab/notebook';
 
-class UploadToCKANButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+import {
+  BoxPanel
+} from "@lumino/widgets";
 
-  createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
+import { CommandRegistry } from '@lumino/commands';
 
-    let uploadToCKAN = () => {
-      console.log('Upload model to CKAN.');
-    };
-    
-    let button = new ToolbarButton({
-      className: 'uploadToCKANButton',
-      label: 'Upload Model to CKAN',
-      onClick: uploadToCKAN,
-      tooltip: 'Upload to CKAN'
+import { reactIcon } from '@jupyterlab/ui-components';
+
+import { FormWidget } from './widget';
+
+namespace CommandIDs {
+  export const create = 'submit-model-widget';
+}
+class UploadToCatalogButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+  private _commands: CommandRegistry
+
+  constructor(options: UploadToCatalogButtonExtension.IOptions) {
+    this._commands = options.commands;
+  }
+
+  createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {  
+    let button = new CommandToolbarButton({
+      commands: this._commands,
+      id: CommandIDs.create,
     });
     
-    panel.toolbar.insertItem(10, 'uploadToCKAN', button);
+    panel.toolbar.insertItem(10, 'uploadToCatalog', button);
   
     return button;
   }
 }
+
+
 function activate(app: JupyterFrontEnd): void {
-  let buttonExtension = new UploadToCKANButtonExtension();
+  const { commands } = app;
+  const command = CommandIDs.create;
+
+  const form = new FormWidget();
+  const panel = new BoxPanel();
+  panel.addWidget(form);
+
+  panel.title.label = 'Submit model';
+  panel.title.icon = reactIcon;
+  panel.title.closable = true;
+  panel.id = 'id-form-widget';
+
+  commands.addCommand(command, {
+    caption: 'Click to submit model to catalog',
+    label: 'Submit model to catalog',
+    icon: args => (args['isPalette'] ? null : reactIcon),
+    execute: () => {
+      if(!panel.isAttached){
+        app.shell.add(panel, 'right');
+        //shell.expandRight();
+      }
+      app.shell.activateById(panel.id);
+    }
+  });
+
+
+  let buttonExtension = new UploadToCatalogButtonExtension({ commands });
   app.docRegistry.addWidgetExtension('Notebook', buttonExtension);
+}
+
+export namespace UploadToCatalogButtonExtension {
+  export interface IOptions {
+    commands: CommandRegistry;
+  }
 }
 
 
