@@ -4,11 +4,7 @@ import React from 'react';
 
 import Form from "@rjsf/core";
 
-import axios from 'axios';
-
-import {
-  AxiosRequestConfig
-} from 'axios';
+import { MintCatalog } from './catalog';
 
 export class FormWidget extends ReactWidget {
   constructor() {
@@ -23,55 +19,9 @@ export class FormWidget extends ReactWidget {
     const password = form.formData.catalogPassword
     const catalogURL = form.formData.catalogEndpoint;
     const typeOfCatalog = form.formData.catalogType;
-    //Get token first
-    const userCrendentials = {
-      "password":password,
-      "username":userName
-    }
-  
-    const data = JSON.stringify(userCrendentials);
-    const signInEndpoint = catalogURL + '/user/login';
-    
-    const config: AxiosRequestConfig = {
-      method: 'post',
-      url: signInEndpoint,
-      headers: {'Content-Type': 'application/json'},
-      data: data
-    };
-
-
-    var loginResponseJSON;
-    try {
-      const response = axios(config);
-      loginResponseJSON = (await response).data
-      console.log('Got token');
-    } catch(error) {
-      console.log(error);
-    }
-
-    // Now use the token to post a model
-    const catalogToken = loginResponseJSON['access_token'];
-    const postModelEndpoint = catalogURL + '/models';
-    var modelData = JSON.stringify({"username": userName,
-    "description":["Machine learning model for fast fuels data"],
-    "keywords":["machine learning","wildfire","fire model","fuelscape"],
-    "label":["Fast Fuel's Machine Learning Model"],"category":["Fire"]});
-
-    var modelConfig: AxiosRequestConfig = {
-      method: 'post',
-      url: postModelEndpoint,
-      headers: { 
-        'Authorization': 'Bearer ' + catalogToken, 
-        'Content-Type': 'application/json'
-      },
-      data : modelData
-    };
-    try {
-      const response = axios(modelConfig);
-      loginResponseJSON = (await response).data
-      console.log('Publish model to ' + typeOfCatalog);
-    } catch(error) {
-      console.log(error);
+    if (typeOfCatalog == "MINT") {
+      let catalog: MintCatalog = new MintCatalog(userName,password,catalogURL);
+      catalog.postModel();
     }
   }
 
