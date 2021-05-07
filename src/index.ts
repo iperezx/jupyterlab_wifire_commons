@@ -26,9 +26,16 @@ import {
 
 import { CommandRegistry } from '@lumino/commands';
 
-import { reactIcon } from '@jupyterlab/ui-components';
+//import { reactIcon } from '@jupyterlab/ui-components';
 
 import { FormWidget } from './widget';
+
+// @ts-ignore
+import wfcLogoSVGStr from '../style/wfc-favicon.svg';
+
+import { LabIcon } from '@jupyterlab/ui-components';
+
+
 
 namespace CommandIDs {
   export const create = 'submit-model-widget';
@@ -47,7 +54,7 @@ class UploadToCatalogButtonExtension implements DocumentRegistry.IWidgetExtensio
     });
     
     panel.toolbar.insertItem(10, 'uploadToCatalog', button);
-  
+
     return button;
   }
 }
@@ -61,18 +68,22 @@ function activate(app: JupyterFrontEnd): void {
   const panel = new BoxPanel();
   panel.addWidget(form);
 
-  panel.title.label = 'Submit model';
-  panel.title.icon = reactIcon;
+  //console.log(panel.layout.parent);
+
+  const wfcIcon = new LabIcon({ name: 'wfc', svgstr: wfcLogoSVGStr });
+
+  //panel.title.label = 'Submit model';
+  panel.title.icon = wfcIcon;
   panel.title.closable = true;
   panel.id = 'id-form-widget';
 
   commands.addCommand(command, {
     caption: 'Click to submit model to catalog',
-    label: 'Submit model to catalog',
-    icon: args => (args['isPalette'] ? null : reactIcon),
+    //label: 'Submit model to catalog',
+    icon: args => (args['isPalette'] ? null : wfcIcon),
     execute: () => {
       if(!panel.isAttached){
-        app.shell.add(panel, 'right');
+        app.shell.add(panel, 'left');
         //shell.expandRight();
       }
       app.shell.activateById(panel.id);
