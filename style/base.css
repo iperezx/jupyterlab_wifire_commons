@@ -1,0 +1,22 @@
+.rjsf {
+/* match font from wifire web site */
+  font-family: "Roboto";
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.wfc fieldset {
+/* prevent fieldset width from expanding */
+  display: inline-block;
+}
+
+.logo {
+/* center logo at top of panel */
+  width: 150px;
+  display: block;
+}
+
+.wfc-input input {
+/* make inputs in form go on separate lines */
+  display: block;
+}
