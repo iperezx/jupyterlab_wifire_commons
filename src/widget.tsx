@@ -5,6 +5,9 @@ import React from 'react';
 import Form from "@rjsf/core";
 
 import { MintCatalog } from './catalog';
+    
+// @ts-ignore
+import imgLogo from '../style/wfc-logo.png';
 
 export class FormWidget extends ReactWidget {
   constructor() {
@@ -57,8 +60,21 @@ export class FormWidget extends ReactWidget {
       }
     }`;
     const uiSchema = `{
+      "catalogEndpoint": {
+        "classNames": "wfc-input"
+      },
+      "catalogType": {
+        "classNames": "wfc-input"
+      },
+      "catalogUser": {
+        "classNames": "wfc-input"
+      },
       "catalogPassword": {
-        "ui:widget": "password"
+        "ui:widget": "password",
+        "classNames": "wfc-input"
+      },
+      "modelFile": {
+        "classNames": "wfc-input"
       }
     }`;
 
@@ -77,7 +93,8 @@ export class FormWidget extends ReactWidget {
         />);
     };
 
-    return <div>
+    return <div className="wfc">
+            <img className="logo" src={imgLogo}/>
             <App
             />
           </div>;
